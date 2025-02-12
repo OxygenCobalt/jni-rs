@@ -91,7 +91,7 @@ pub enum JniError {
     Other(sys::jint),
 }
 
-#[cfg(feature = "std")]
+#[cfg(any(feature = "std"))]
 impl<T> From<::std::sync::TryLockError<T>> for Error {
     fn from(_: ::std::sync::TryLockError<T>) -> Self {
         Error::TryLock

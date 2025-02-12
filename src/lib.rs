@@ -2,11 +2,7 @@
 #![allow(clippy::upper_case_acronyms)]
 // TODO: https://github.com/jni-rs/jni-rs/issues/348
 #![allow(clippy::not_unsafe_ptr_arg_deref)]
-
-#![cfg_attr(all(not(feature = "std"), not(test)), no_std)]
-extern crate alloc;
-extern crate core;
-
+#![cfg_attr(not(feature = "std"), no_std)]
 //! # Safe JNI Bindings in Rust
 //!
 //! This crate provides a (mostly) safe way to implement methods in Java using
@@ -194,6 +190,10 @@ extern crate core;
 //! [projects-graalvm]: http://www.graalvm.org/docs/why-graal/#for-java-programs
 //! [graalvm-rust]: http://www.graalvm.org/docs/reference-manual/languages/llvm/#running-rust
 //! [projects-panama]: https://jdk.java.net/panama/
+
+// std imports
+extern crate alloc;
+extern crate core;
 
 /// `jni-sys` re-exports
 pub mod sys;

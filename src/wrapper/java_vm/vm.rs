@@ -5,7 +5,7 @@ use core::{
     sync::atomic::{AtomicUsize, Ordering},
 };
 
-#[cfg(feature = "std")]
+#[cfg(any(feature = "std"))]
 use std::thread::{current, Thread};
 
 use log::{debug, error};
@@ -260,7 +260,7 @@ impl JavaVM {
     ///
     /// [block]: https://docs.oracle.com/en/java/javase/12/docs/specs/jni/invocation.html#unloading-the-vm
     /// [attach-as-daemon]: struct.JavaVM.html#method.attach_current_thread_as_daemon
-    #[cfg(feature = "std")]
+    #[cfg(any(feature = "std"))]
     pub fn attach_current_thread_permanently(&self) -> Result<JNIEnv> {
         // Safety: NOT SAFE CURRENTLY: https://github.com/jni-rs/jni-rs/discussions/436#discussioncomment-5421738
         unsafe {
@@ -284,7 +284,7 @@ impl JavaVM {
     ///
     /// [block]: https://docs.oracle.com/en/java/javase/12/docs/specs/jni/invocation.html#unloading-the-vm
     /// [attach-as-daemon]: struct.JavaVM.html#method.attach_current_thread_as_daemon
-    #[cfg(feature = "std")]
+    #[cfg(any(feature = "std"))]
     pub fn attach_current_thread(&self) -> Result<AttachGuard> {
         // Safety: NOT SAFE CURRENTLY: https://github.com/jni-rs/jni-rs/discussions/436#discussioncomment-5421738
         unsafe {
@@ -333,7 +333,7 @@ impl JavaVM {
     /// never appropriate to use it with the scoped attachment (`attach_current_thread`).
     // This method is hidden because it is almost never needed and its use requires some
     // extra care. Its status might be reconsidered if we learn of any use cases that require it.
-    #[cfg(feature = "std")]
+    #[cfg(any(feature = "std"))]
     pub unsafe fn detach_current_thread(&self) {
         InternalAttachGuard::clear_tls();
     }
@@ -353,7 +353,7 @@ impl JavaVM {
     /// This API is so unsafe to consider for its intended purpose that it will
     /// likely be removed from this crate, in favor of relegating the
     /// functionality to the `jni-sys` crate instead.
-    #[cfg(feature = "std")]
+    #[cfg(any(feature = "std"))]
     pub unsafe fn attach_current_thread_as_daemon(&self) -> Result<JNIEnv> {
         match self.get_env(JNIVersion::V1_4) {
             Ok(env) => Ok(env),
@@ -411,7 +411,7 @@ impl JavaVM {
     }
 
     /// Creates `InternalAttachGuard` and attaches current thread.
-    #[cfg(feature = "std")]
+    #[cfg(any(feature = "std"))]
     unsafe fn attach_current_thread_impl(&self, thread_type: ThreadType) -> Result<JNIEnv> {
         let guard = InternalAttachGuard::new(self.clone());
         let env_ptr = unsafe {
@@ -513,7 +513,7 @@ impl JavaVM {
     }
 }
 
-#[cfg(feature = "std")]
+#[cfg(any(feature = "std"))]
 thread_local! {
     static THREAD_ATTACH_GUARD: RefCell<Option<InternalAttachGuard>> = const { RefCell::new(None) }
 }
@@ -523,13 +523,13 @@ static ATTACHED_THREADS: AtomicUsize = AtomicUsize::new(0);
 /// A RAII implementation of scoped guard which detaches the current thread
 /// when dropped. The attached `JNIEnv` can be accessed through this guard
 /// via its `Deref` implementation.
-#[cfg(feature = "std")]
+#[cfg(any(feature = "std"))]
 pub struct AttachGuard<'local> {
     env: JNIEnv<'local>,
     should_detach: bool,
 }
 
-#[cfg(feature = "std")]
+#[cfg(any(feature = "std"))]
 impl<'local> AttachGuard<'local> {
     /// AttachGuard created with this method will detach current thread on drop
     fn new(env: JNIEnv<'local>) -> Self {
@@ -549,7 +549,7 @@ impl<'local> AttachGuard<'local> {
     }
 }
 
-#[cfg(feature = "std")]
+#[cfg(any(feature = "std"))]
 impl<'local> Deref for AttachGuard<'local> {
     type Target = JNIEnv<'local>;
 
@@ -558,14 +558,14 @@ impl<'local> Deref for AttachGuard<'local> {
     }
 }
 
-#[cfg(feature = "std")]
+#[cfg(any(feature = "std"))]
 impl DerefMut for AttachGuard<'_> {
     fn deref_mut(&mut self) -> &mut Self::Target {
         &mut self.env
     }
 }
 
-#[cfg(feature = "std")]
+#[cfg(any(feature = "std"))]
 impl Drop for AttachGuard<'_> {
     fn drop(&mut self) {
         if self.should_detach {
@@ -580,7 +580,7 @@ enum ThreadType {
     Daemon,
 }
 
-#[cfg(feature = "std")]
+#[cfg(any(feature = "std"))]
 #[derive(Debug)]
 struct InternalAttachGuard {
     java_vm: JavaVM,
@@ -592,7 +592,7 @@ struct InternalAttachGuard {
     thread: Thread,
 }
 
-#[cfg(feature = "std")]
+#[cfg(any(feature = "std"))]
 impl InternalAttachGuard {
     fn new(java_vm: JavaVM) -> Self {
         Self {
@@ -681,7 +681,7 @@ impl InternalAttachGuard {
     }
 }
 
-#[cfg(feature = "std")]
+#[cfg(any(feature = "std"))]
 impl Drop for InternalAttachGuard {
     fn drop(&mut self) {
         if let Err(e) = self.detach() {

@@ -8,7 +8,7 @@ use crate::{
     sys, JNIEnv, JNIVersion, JavaVM,
 };
 
-#[cfg(feature = "std")]
+#[cfg(any(feature = "std"))]
 use crate::objects::GlobalRef;
 
 // Note: `WeakRef` must not implement `Into<JObject>`! If it did, then it would be possible to
@@ -139,7 +139,7 @@ impl WeakRef {
     ///
     /// If this method returns `Ok(Some(r))`, it is guaranteed that the object will not be garbage
     /// collected at least until `r` is dropped.
-    #[cfg(feature = "std")]
+    #[cfg(any(feature = "std"))]
     pub fn upgrade_global(&self, env: &JNIEnv) -> Result<Option<GlobalRef>> {
         let r = env.new_global_ref(unsafe { JObject::from_raw(self.as_raw()) })?;
 
@@ -220,16 +220,13 @@ impl Drop for WeakRefGuard {
         let res = match unsafe { self.vm.get_env(JNIVersion::V1_4) } {
             Ok(env) => drop_impl(&env, self.raw),
             Err(_) => {
-                cfg_if::cfg_if! {
-                    if #[cfg(feature = "std")] {
-                        warn!("Dropping a WeakRef in a detached thread. Fix your code if this message appears frequently (see the WeakRef docs).");
-                        self.vm
+                #[cfg(any(feature = "std"))]
+                let res = self.vm
                             .attach_current_thread()
-                            .and_then(|env| drop_impl(&env, self.raw))
-                    } else {
-                        panic!("Dropping a WeakRef in a detached thread. Fix your code if this message appears frequently (see the WeakRef docs).");
-                    }
-                };
+                            .and_then(|env| drop_impl(&env, self.raw));
+                #[cfg(not(feature = "std"))]
+                let res = Err(crate::errors::Error::UnsupportedVersion);
+                res
             }
         };
 

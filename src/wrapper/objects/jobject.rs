@@ -2,7 +2,7 @@ use core::marker::PhantomData;
 
 use crate::sys::jobject;
 
-#[cfg(doc)]
+#[cfg(all(not(test), feature = "std"))]
 use crate::{objects::GlobalRef, JNIEnv};
 
 /// Wrapper around [`sys::jobject`] that adds a lifetime to ensure that

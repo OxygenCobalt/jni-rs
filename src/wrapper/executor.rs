@@ -2,7 +2,7 @@ use alloc::sync::Arc;
 
 use crate::JavaVM;
 
-#[cfg(feature = "std")]
+#[cfg(any(feature = "std"))]
 use crate::{errors::*, JNIEnv};
 
 /// The capacity of local frames, allocated for attached threads by default. Same as the default
@@ -69,7 +69,7 @@ impl Executor {
     /// call.
     ///
     /// Allocates a local frame with the specified capacity.
-    #[cfg(feature = "std")]
+    #[cfg(any(feature = "std"))]
     pub fn with_attached_capacity<F, T, E>(&self, capacity: i32, f: F) -> core::result::Result<T, E>
     where
         F: FnOnce(&mut JNIEnv) -> core::result::Result<T, E>,
@@ -87,7 +87,7 @@ impl Executor {
     ///
     /// Allocates a local frame with
     /// [the default capacity](constant.DEFAULT_LOCAL_FRAME_CAPACITY.html).
-    #[cfg(feature = "std")]
+    #[cfg(any(feature = "std"))]
     pub fn with_attached<F, T, E>(&self, f: F) -> core::result::Result<T, E>
     where
         F: FnOnce(&mut JNIEnv) -> core::result::Result<T, E>,

@@ -5,7 +5,7 @@ use crate::{
     strings::JNIString,
     JNIEnv,
 };
-#[cfg(feature = "std")]
+#[cfg(any(feature = "std"))]
 use crate::objects::GlobalRef;
 
 unsafe impl<'local, T> Desc<'local, JClass<'local>> for T
@@ -35,7 +35,7 @@ where
 // around `JObject`), but that may change in the future. Moreover, this
 // doesn't check if the global reference actually refers to a
 // `java.lang.Class` object.
-#[cfg(feature = "std")]
+#[cfg(any(feature = "std"))]
 unsafe impl<'local, 'obj_ref> Desc<'local, JClass<'static>> for &'obj_ref GlobalRef {
     type Output = &'obj_ref JClass<'static>;
 

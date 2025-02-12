@@ -8,11 +8,13 @@ use core::{
 
 use alloc::{vec::Vec, string::String};
 
-#[cfg(feature = "std")]
+#[cfg(any(feature = "std"))]
 use std::{
     panic::{catch_unwind, resume_unwind, AssertUnwindSafe},
     sync::{Mutex, MutexGuard},
 };
+#[cfg(any(feature = "std"))]
+use crate::objects::GlobalRef;
 
 
 use jni_sys::jobject;
@@ -41,9 +43,6 @@ use crate::{
     },
 };
 use crate::{objects::AsJArrayRaw, signature::ReturnType};
-
-#[cfg(feature = "std")]
-use std::panic::{catch_unwind, resume_unwind, AssertUnwindSafe};
 
 /// FFI-compatible JNIEnv struct. You can safely use this as the JNIEnv argument
 /// to exported methods that will be called by java. This is where most of the
@@ -756,7 +755,7 @@ impl<'local> JNIEnv<'local> {
     /// Global references take more time to create or delete than ordinary
     /// local references do, but have several properties that make them useful
     /// in certain situations. See [`GlobalRef`] for more information.
-    #[cfg(feature = "std")]
+    #[cfg(any(feature = "std"))]
     pub fn new_global_ref<'other_local, O>(&self, obj: O) -> Result<GlobalRef>
     where
         O: AsRef<JObject<'other_local>>,
@@ -848,11 +847,11 @@ impl<'local> JNIEnv<'local> {
     /// reference:
     ///
     /// ```no_run
-    /// # use jni::{JNIEnv, objects::*};
-    /// # use std::fmt::Display;
-    /// #
-    /// # type SomeOtherErrorType = Box<dyn Display>;
-    /// #
+    /// use jni::{JNIEnv, objects::*};
+    /// use std::fmt::Display;
+    /// 
+    /// type SomeOtherErrorType = Box<dyn Display>;
+    /// 
     /// /// An error that may be caused by either a Java exception or something going wrong in Rust
     /// /// code.
     /// enum ExampleError {
@@ -1038,7 +1037,7 @@ impl<'local> JNIEnv<'local> {
     /// Since local references created within this frame won't be accessible to the calling
     /// frame then if you need to pass an object back to the caller then you can do that via a
     /// [`GlobalRef`] / [`Self::make_global`].
-    #[cfg(feature = "std")]
+    #[cfg(any(feature = "std"))]
     pub fn with_local_frame<F, T, E>(&mut self, capacity: i32, f: F) -> std::result::Result<T, E>
     where
         F: FnOnce(&mut JNIEnv) -> std::result::Result<T, E>,
@@ -1069,7 +1068,7 @@ impl<'local> JNIEnv<'local> {
     /// from a local frame as special-case optimization, this alternative to `with_local_frame`
     /// exposes that capability to return a local reference without needing to create a
     /// temporary [`GlobalRef`].
-    #[cfg(feature = "std")]
+    #[cfg(any(feature = "std"))]
     pub fn with_local_frame_returning_local<F, E>(
         &mut self,
         capacity: i32,
@@ -2925,7 +2924,7 @@ impl<'local> JNIEnv<'local> {
     /// taken and dropped multiple times from Rust. If you need to copy an
     /// object with one of these fields then the field should be zero
     /// initialized in the copy.
-    #[cfg(feature = "std")]
+    #[cfg(any(feature = "std"))]
     pub unsafe fn set_rust_field<'other_local, O, S, T>(
         &self,
         obj: O,
@@ -2982,7 +2981,7 @@ impl<'local> JNIEnv<'local> {
     /// If the field contains a non-zero value then it is assumed to be a valid
     /// pointer that was set via `set_rust_field` and will lead to undefined
     /// behaviour if that is not true.
-    #[cfg(feature = "std")]
+    #[cfg(any(feature = "std"))]
     pub unsafe fn get_rust_field<'other_local, O, S, T>(
         &self,
         obj: O,
@@ -3026,7 +3025,7 @@ impl<'local> JNIEnv<'local> {
     /// If the field contains a non-zero value then it is assumed to be a valid
     /// pointer that was set via `set_rust_field` and will lead to undefined
     /// behaviour if that is not true.
-    #[cfg(feature = "std")]
+    #[cfg(any(feature = "std"))]
     pub unsafe fn take_rust_field<'other_local, O, S, T>(&self, obj: O, field: S) -> Result<T>
     where
         O: AsRef<JObject<'other_local>>,

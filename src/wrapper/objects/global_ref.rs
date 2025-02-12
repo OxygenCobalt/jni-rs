@@ -1,4 +1,4 @@
-#![cfg(feature = "std")]
+#![cfg(any(feature = "std"))]
 use core::{mem, ops::Deref};
 use alloc::sync::Arc;
 

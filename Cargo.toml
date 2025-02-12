@@ -53,8 +53,9 @@ bytemuck = "1.13.0"
 
 [features]
 invocation = ["java-locator", "libloading"]
-default = [std]
 std = []
+default = ["std"]
 
 [package.metadata.docs.rs]
 features = ["invocation"]
+
