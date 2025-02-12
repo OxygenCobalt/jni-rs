@@ -1,4 +1,6 @@
-use std::{fmt, str::FromStr};
+use core::{fmt, str::FromStr};
+use alloc::{vec::Vec, boxed::Box, string::String};
+use alloc::borrow::ToOwned;
 
 use combine::{
     between, many, many1, parser, satisfy, token, ParseError, Parser, StdParseResult, Stream,
@@ -51,7 +53,7 @@ pub enum JavaType {
 impl FromStr for JavaType {
     type Err = Error;
 
-    fn from_str(s: &str) -> std::result::Result<Self, Self::Err> {
+    fn from_str(s: &str) -> core::result::Result<Self, Self::Err> {
         parser(parse_type)
             .parse(s)
             .map(|res| res.0)
@@ -86,7 +88,7 @@ pub enum ReturnType {
 impl FromStr for ReturnType {
     type Err = Error;
 
-    fn from_str(s: &str) -> std::result::Result<Self, Self::Err> {
+    fn from_str(s: &str) -> core::result::Result<Self, Self::Err> {
         parser(parse_return)
             .parse(s)
             .map(|res| res.0)

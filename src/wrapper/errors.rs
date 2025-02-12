@@ -1,13 +1,15 @@
 #![allow(missing_docs)]
 
-use std::char::{CharTryFromError, DecodeUtf16Error};
+use core::char::{CharTryFromError, DecodeUtf16Error};
 
 use thiserror::Error;
+
+use alloc::string::String;
 
 use crate::sys;
 use crate::wrapper::signature::TypeSignature;
 
-pub type Result<T> = std::result::Result<T, Error>;
+pub type Result<T> = core::result::Result<T, Error>;
 
 #[cfg(doc)]
 use crate::objects::{char_from_java_int, char_to_java, char_to_java_int, JValue, JValueOwned};
@@ -89,6 +91,7 @@ pub enum JniError {
     Other(sys::jint),
 }
 
+#[cfg(feature = "std")]
 impl<T> From<::std::sync::TryLockError<T>> for Error {
     fn from(_: ::std::sync::TryLockError<T>) -> Self {
         Error::TryLock

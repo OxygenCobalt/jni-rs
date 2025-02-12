@@ -1,6 +1,9 @@
-use std::sync::Arc;
+use alloc::sync::Arc;
 
-use crate::{errors::*, JNIEnv, JavaVM};
+use crate::JavaVM;
+
+#[cfg(feature = "std")]
+use crate::{errors::*, JNIEnv};
 
 /// The capacity of local frames, allocated for attached threads by default. Same as the default
 /// value Hotspot uses when calling native Java methods.
@@ -66,9 +69,10 @@ impl Executor {
     /// call.
     ///
     /// Allocates a local frame with the specified capacity.
-    pub fn with_attached_capacity<F, T, E>(&self, capacity: i32, f: F) -> std::result::Result<T, E>
+    #[cfg(feature = "std")]
+    pub fn with_attached_capacity<F, T, E>(&self, capacity: i32, f: F) -> core::result::Result<T, E>
     where
-        F: FnOnce(&mut JNIEnv) -> std::result::Result<T, E>,
+        F: FnOnce(&mut JNIEnv) -> core::result::Result<T, E>,
         E: From<Error>,
     {
         assert!(capacity > 0, "capacity should be a positive integer");
@@ -83,9 +87,10 @@ impl Executor {
     ///
     /// Allocates a local frame with
     /// [the default capacity](constant.DEFAULT_LOCAL_FRAME_CAPACITY.html).
-    pub fn with_attached<F, T, E>(&self, f: F) -> std::result::Result<T, E>
+    #[cfg(feature = "std")]
+    pub fn with_attached<F, T, E>(&self, f: F) -> core::result::Result<T, E>
     where
-        F: FnOnce(&mut JNIEnv) -> std::result::Result<T, E>,
+        F: FnOnce(&mut JNIEnv) -> core::result::Result<T, E>,
         E: From<Error>,
     {
         self.with_attached_capacity(DEFAULT_LOCAL_FRAME_CAPACITY, f)
