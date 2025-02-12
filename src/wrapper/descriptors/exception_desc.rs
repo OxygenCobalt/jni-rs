@@ -5,6 +5,7 @@ use crate::{
     strings::JNIString,
     JNIEnv,
 };
+use alloc::string::String;
 
 const DEFAULT_EXCEPTION_CLASS: &str = "java/lang/RuntimeException";
 
