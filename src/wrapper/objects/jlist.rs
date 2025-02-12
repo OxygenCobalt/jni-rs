@@ -6,7 +6,7 @@ use crate::{
     JNIEnv,
 };
 
-use std::marker::PhantomData;
+use core::marker::PhantomData;
 
 /// Wrapper for JObjects that implement `java/util/List`. Provides methods to get,
 /// add, and remove elements.

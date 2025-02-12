@@ -36,7 +36,9 @@ mod jbytebuffer;
 pub use self::jbytebuffer::*;
 
 // For storing a reference to a java object
+#[cfg(feature = "std")]
 mod global_ref;
+#[cfg(feature = "std")]
 pub use self::global_ref::*;
 
 mod weak_ref;

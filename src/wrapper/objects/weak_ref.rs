@@ -1,12 +1,15 @@
-use std::sync::Arc;
+use alloc::sync::Arc;
 
 use log::{debug, warn};
 
 use crate::{
     errors::Result,
-    objects::{GlobalRef, JObject},
+    objects::JObject,
     sys, JNIEnv, JNIVersion, JavaVM,
 };
+
+#[cfg(feature = "std")]
+use crate::objects::GlobalRef;
 
 // Note: `WeakRef` must not implement `Into<JObject>`! If it did, then it would be possible to
 // wrap it in `AutoLocal`, which would cause undefined behavior upon drop as a result of calling
@@ -136,6 +139,7 @@ impl WeakRef {
     ///
     /// If this method returns `Ok(Some(r))`, it is guaranteed that the object will not be garbage
     /// collected at least until `r` is dropped.
+    #[cfg(feature = "std")]
     pub fn upgrade_global(&self, env: &JNIEnv) -> Result<Option<GlobalRef>> {
         let r = env.new_global_ref(unsafe { JObject::from_raw(self.as_raw()) })?;
 
@@ -216,10 +220,16 @@ impl Drop for WeakRefGuard {
         let res = match unsafe { self.vm.get_env(JNIVersion::V1_4) } {
             Ok(env) => drop_impl(&env, self.raw),
             Err(_) => {
-                warn!("Dropping a WeakRef in a detached thread. Fix your code if this message appears frequently (see the WeakRef docs).");
-                self.vm
-                    .attach_current_thread()
-                    .and_then(|env| drop_impl(&env, self.raw))
+                cfg_if::cfg_if! {
+                    if #[cfg(feature = "std")] {
+                        warn!("Dropping a WeakRef in a detached thread. Fix your code if this message appears frequently (see the WeakRef docs).");
+                        self.vm
+                            .attach_current_thread()
+                            .and_then(|env| drop_impl(&env, self.raw))
+                    } else {
+                        panic!("Dropping a WeakRef in a detached thread. Fix your code if this message appears frequently (see the WeakRef docs).");
+                    }
+                };
             }
         };
 

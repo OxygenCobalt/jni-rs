@@ -1,4 +1,4 @@
-use std::marker::PhantomData;
+use core::marker::PhantomData;
 
 use crate::{
     objects::JObject,
@@ -39,7 +39,7 @@ impl<'local, T: TypeArray> AsRef<JObject<'local>> for JPrimitiveArray<'local, T>
     }
 }
 
-impl<'local, T: TypeArray> ::std::ops::Deref for JPrimitiveArray<'local, T> {
+impl<'local, T: TypeArray> ::core::ops::Deref for JPrimitiveArray<'local, T> {
     type Target = JObject<'local>;
 
     fn deref(&self) -> &Self::Target {
@@ -70,7 +70,7 @@ impl<'local, 'obj_ref, T: TypeArray> From<&'obj_ref JObject<'local>>
     }
 }
 
-impl<T: TypeArray> std::default::Default for JPrimitiveArray<'_, T> {
+impl<T: TypeArray> core::default::Default for JPrimitiveArray<'_, T> {
     fn default() -> Self {
         Self {
             obj: JObject::null(),

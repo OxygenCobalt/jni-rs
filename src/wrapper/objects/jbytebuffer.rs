@@ -18,7 +18,7 @@ impl<'local> AsRef<JObject<'local>> for JByteBuffer<'local> {
     }
 }
 
-impl<'local> ::std::ops::Deref for JByteBuffer<'local> {
+impl<'local> ::core::ops::Deref for JByteBuffer<'local> {
     type Target = JObject<'local>;
 
     fn deref(&self) -> &Self::Target {
@@ -45,7 +45,7 @@ impl<'local, 'obj_ref> From<&'obj_ref JObject<'local>> for &'obj_ref JByteBuffer
     }
 }
 
-impl std::default::Default for JByteBuffer<'_> {
+impl core::default::Default for JByteBuffer<'_> {
     fn default() -> Self {
         Self(JObject::null())
     }

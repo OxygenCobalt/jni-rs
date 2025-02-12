@@ -1,5 +1,5 @@
 use log::error;
-use std::ptr::NonNull;
+use core::ptr::NonNull;
 
 use crate::sys::jboolean;
 use crate::wrapper::objects::ReleaseMode;
@@ -144,16 +144,16 @@ impl<T: TypeArray> From<&AutoElementsCritical<'_, '_, '_, '_, T>> for *mut T {
     }
 }
 
-impl<T: TypeArray> std::ops::Deref for AutoElementsCritical<'_, '_, '_, '_, T> {
+impl<T: TypeArray> core::ops::Deref for AutoElementsCritical<'_, '_, '_, '_, T> {
     type Target = [T];
 
     fn deref(&self) -> &Self::Target {
-        unsafe { std::slice::from_raw_parts(self.ptr.as_ptr(), self.len) }
+        unsafe { core::slice::from_raw_parts(self.ptr.as_ptr(), self.len) }
     }
 }
 
-impl<T: TypeArray> std::ops::DerefMut for AutoElementsCritical<'_, '_, '_, '_, T> {
+impl<T: TypeArray> core::ops::DerefMut for AutoElementsCritical<'_, '_, '_, '_, T> {
     fn deref_mut(&mut self) -> &mut Self::Target {
-        unsafe { std::slice::from_raw_parts_mut(self.ptr.as_mut(), self.len) }
+        unsafe { core::slice::from_raw_parts_mut(self.ptr.as_mut(), self.len) }
     }
 }

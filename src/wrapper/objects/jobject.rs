@@ -1,4 +1,4 @@
-use std::marker::PhantomData;
+use core::marker::PhantomData;
 
 use crate::sys::jobject;
 
@@ -51,7 +51,7 @@ impl<'local> AsMut<JObject<'local>> for JObject<'local> {
     }
 }
 
-impl ::std::ops::Deref for JObject<'_> {
+impl ::core::ops::Deref for JObject<'_> {
     type Target = jobject;
 
     fn deref(&self) -> &Self::Target {
@@ -92,11 +92,11 @@ impl JObject<'_> {
     /// Null references are always valid and do not belong to a local reference frame. Therefore,
     /// the returned `JObject` always has the `'static` lifetime.
     pub const fn null() -> JObject<'static> {
-        unsafe { JObject::from_raw(std::ptr::null_mut() as jobject) }
+        unsafe { JObject::from_raw(core::ptr::null_mut() as jobject) }
     }
 }
 
-impl std::default::Default for JObject<'_> {
+impl core::default::Default for JObject<'_> {
     fn default() -> Self {
         Self::null()
     }

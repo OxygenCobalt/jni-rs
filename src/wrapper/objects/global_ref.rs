@@ -1,4 +1,6 @@
-use std::{mem, ops::Deref, sync::Arc};
+#![cfg(feature = "std")]
+use core::{mem, ops::Deref};
+use alloc::sync::Arc;
 
 use log::{debug, warn};
 

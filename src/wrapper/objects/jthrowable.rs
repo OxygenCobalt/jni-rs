@@ -20,7 +20,7 @@ impl<'local> AsRef<JObject<'local>> for JThrowable<'local> {
     }
 }
 
-impl<'local> ::std::ops::Deref for JThrowable<'local> {
+impl<'local> ::core::ops::Deref for JThrowable<'local> {
     type Target = JObject<'local>;
 
     fn deref(&self) -> &Self::Target {
@@ -47,7 +47,7 @@ impl<'local, 'obj_ref> From<&'obj_ref JObject<'local>> for &'obj_ref JThrowable<
     }
 }
 
-impl std::default::Default for JThrowable<'_> {
+impl core::default::Default for JThrowable<'_> {
     fn default() -> Self {
         Self(JObject::null())
     }

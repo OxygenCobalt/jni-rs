@@ -1,4 +1,4 @@
-use std::{
+use core::{
     mem::ManuallyDrop,
     ops::{Deref, DerefMut},
     ptr,

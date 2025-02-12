@@ -1,6 +1,6 @@
-use std::char::{CharTryFromError, DecodeUtf16Error};
-use std::convert::{TryFrom, TryInto};
-use std::fmt::Debug;
+use core::char::{CharTryFromError, DecodeUtf16Error};
+use core::convert::{TryFrom, TryInto};
+use core::fmt::Debug;
 
 use log::trace;
 
@@ -191,11 +191,11 @@ impl<'obj_ref> JValue<'obj_ref> {
             Self::Float(float) => jvalue { f: *float },
             Self::Double(double) => jvalue { d: *double },
             Self::Void => jvalue {
-                l: ::std::ptr::null_mut(),
+                l: ::core::ptr::null_mut(),
             },
         };
         trace!("converted {:?} to jvalue {:?}", self, unsafe {
-            ::std::mem::transmute::<jvalue, u64>(val)
+            ::core::mem::transmute::<jvalue, u64>(val)
         });
         val
     }
@@ -447,7 +447,7 @@ impl TryFrom<JValue<'_>> for jchar {
 impl TryFrom<char> for JValueOwned<'_> {
     type Error = CharToJavaError;
 
-    fn try_from(value: char) -> std::result::Result<Self, Self::Error> {
+    fn try_from(value: char) -> core::result::Result<Self, Self::Error> {
         Ok(Self::Char(char_to_java(value)?))
     }
 }
@@ -458,7 +458,7 @@ impl TryFrom<char> for JValueOwned<'_> {
 impl TryFrom<char> for JValue<'_> {
     type Error = CharToJavaError;
 
-    fn try_from(value: char) -> std::result::Result<Self, Self::Error> {
+    fn try_from(value: char) -> core::result::Result<Self, Self::Error> {
         Ok(Self::Char(char_to_java(value)?))
     }
 }
@@ -485,7 +485,7 @@ impl TryFrom<char> for JValue<'_> {
 ///
 /// [`codePoints`]: https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html#codePoints()
 /// [surrogate pair]: https://en.wikipedia.org/wiki/Surrogate_pair
-pub fn char_from_java(char: jchar) -> std::result::Result<char, DecodeUtf16Error> {
+pub fn char_from_java(char: jchar) -> core::result::Result<char, DecodeUtf16Error> {
     char::decode_utf16([char]).next().unwrap()
 }
 
@@ -510,7 +510,7 @@ pub fn char_from_java(char: jchar) -> std::result::Result<char, DecodeUtf16Error
 /// This function returns an error if the provided `char` cannot be represented in UTF-16 without a surrogate pair, and therefore cannot be converted to a single Java `char`.
 ///
 /// [surrogate pair]: https://en.wikipedia.org/wiki/Surrogate_pair
-pub fn char_to_java(char: char) -> std::result::Result<jchar, CharToJavaError> {
+pub fn char_to_java(char: char) -> core::result::Result<jchar, CharToJavaError> {
     if char.len_utf16() != 1 {
         return Err(CharToJavaError { char });
     }
@@ -670,7 +670,7 @@ pub fn char_to_java_int(char: char) -> jint {
 /// Returns an error if the Java `int` doesn't represent a valid UTF-32 unit.
 ///
 /// [`String.codePointAt`]: https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html#codePointAt(int)
-pub fn char_from_java_int(jint: jint) -> std::result::Result<char, CharTryFromError> {
+pub fn char_from_java_int(jint: jint) -> core::result::Result<char, CharTryFromError> {
     char::try_from(jint as u32)
 }
 

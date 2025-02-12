@@ -21,7 +21,7 @@ impl<'local> AsRef<JObject<'local>> for JClass<'local> {
     }
 }
 
-impl<'local> ::std::ops::Deref for JClass<'local> {
+impl<'local> ::core::ops::Deref for JClass<'local> {
     type Target = JObject<'local>;
 
     fn deref(&self) -> &Self::Target {
@@ -50,7 +50,7 @@ impl<'local, 'obj_ref> From<&'obj_ref JObject<'local>> for &'obj_ref JClass<'loc
     }
 }
 
-impl std::default::Default for JClass<'_> {
+impl core::default::Default for JClass<'_> {
     fn default() -> Self {
         Self(JObject::null())
     }

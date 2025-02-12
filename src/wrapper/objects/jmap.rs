@@ -5,7 +5,7 @@ use crate::{
     JNIEnv,
 };
 
-use std::marker::PhantomData;
+use core::marker::PhantomData;
 
 /// Wrapper for JObjects that implement `java/util/Map`. Provides methods to get
 /// and set entries and a way to iterate over key/value pairs.

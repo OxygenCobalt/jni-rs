@@ -22,7 +22,7 @@ impl<'local> AsRef<JObject<'local>> for JObjectArray<'local> {
     }
 }
 
-impl<'local> ::std::ops::Deref for JObjectArray<'local> {
+impl<'local> ::core::ops::Deref for JObjectArray<'local> {
     type Target = JObject<'local>;
 
     fn deref(&self) -> &Self::Target {
@@ -51,7 +51,7 @@ impl<'local, 'obj_ref> From<&'obj_ref JObject<'local>> for &'obj_ref JObjectArra
     }
 }
 
-impl std::default::Default for JObjectArray<'_> {
+impl core::default::Default for JObjectArray<'_> {
     fn default() -> Self {
         Self(JObject::null())
     }
