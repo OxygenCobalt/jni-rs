@@ -44,7 +44,7 @@ pub enum Error {
     #[error("Throw failed with error code {0}")]
     ThrowFailed(i32),
     #[error("Parse failed for input: {1}")]
-    ParseFailed(#[source] combine::error::StringStreamError, String),
+    ParseFailed(combine::error::StringStreamError, String),
     #[error("JNI call failed")]
     JniCall(#[source] JniError),
 
