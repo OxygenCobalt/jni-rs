@@ -1,9 +1,12 @@
 use jni_sys::{jboolean, JNI_TRUE};
-use std::{borrow::Cow, os::raw::c_char};
+use core::ffi::c_char;
+use alloc::borrow::Cow;
 
 use log::warn;
 
 use crate::{errors::*, objects::JString, strings::JNIStr, JNIEnv};
+
+use alloc::string::String;
 
 #[cfg(doc)]
 use crate::strings::JNIString;
@@ -130,7 +133,7 @@ impl<'local, 'other_local: 'obj_ref, 'obj_ref> JavaStr<'local, 'other_local, 'ob
     /// [`JavaStr::from_raw`] and then dropping it, or by passing the pointer
     /// to the JNI function `ReleaseStringUTFChars`.
     pub fn into_raw(self) -> *const c_char {
-        let mut _dont_call_drop = std::mem::ManuallyDrop::new(self);
+        let mut _dont_call_drop = core::mem::ManuallyDrop::new(self);
 
         // Drop the `JNIEnv` in place. As of this writing, that's a no-op, but if `JNIEnv`
         // gains any drop code in the future, this will run it.
@@ -139,7 +142,7 @@ impl<'local, 'other_local: 'obj_ref, 'obj_ref> JavaStr<'local, 'other_local, 'ob
         // accessed again after this point. Because `self` has been moved into `ManuallyDrop`,
         // the `JNIEnv` will not be dropped twice.
         unsafe {
-            std::ptr::drop_in_place(&mut _dont_call_drop.env);
+            core::ptr::drop_in_place(&mut _dont_call_drop.env);
         }
 
         _dont_call_drop.internal
@@ -192,7 +195,7 @@ impl<'local, 'other_local: 'obj_ref, 'obj_ref> JavaStr<'local, 'other_local, 'ob
     }
 }
 
-impl<'other_local: 'obj_ref, 'obj_ref> ::std::ops::Deref for JavaStr<'_, 'other_local, 'obj_ref> {
+impl<'other_local: 'obj_ref, 'obj_ref> ::core::ops::Deref for JavaStr<'_, 'other_local, 'obj_ref> {
     type Target = JNIStr;
     fn deref(&self) -> &Self::Target {
         self.into()

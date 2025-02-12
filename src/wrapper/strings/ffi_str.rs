@@ -1,8 +1,11 @@
-use std::{
+use alloc::{
+    ffi::CString,
     borrow::{Borrow, Cow, ToOwned},
-    ffi::{CStr, CString},
-    os::raw::c_char,
 };
+use core::ffi::{
+    CStr, c_char
+};
+use alloc::string::String;
 
 use cesu8::{from_java_cesu8, to_java_cesu8};
 use log::debug;
@@ -49,7 +52,7 @@ pub struct JNIStr {
     internal: CStr,
 }
 
-impl ::std::ops::Deref for JNIString {
+impl ::core::ops::Deref for JNIString {
     type Target = JNIStr;
 
     fn deref(&self) -> &Self::Target {
